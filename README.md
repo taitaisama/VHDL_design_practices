@@ -141,4 +141,4 @@ And as extected, we get our netlist as:
 
 ![REGISTER](https://github.com/taitaisama/VHDL_design_practices/blob/main/REGISTER.png?raw=true)
 
-So Rule 3 is: To initialise varibles that you want to be in registers you put them in a process which just has one sensitivity, clock, and then initialise them in an if condition as rising_edge(clock) or falling_edge(clock). The only variables that have to be set here are registers, so don't put anything that you don't want as a register inside this if statement. Also registers need to be only set inside such an if statement, don't change their values outside.
+So Rule 3 is: To initialise varibles that you want to be in registers you put them in a process which just has one sensitivity, clock, and then initialise them in an if condition as `rising_edge(clock)` or `falling_edge(clock)`. The only variables that have to be set here are registers, so don't put anything that you don't want as a register inside this if statement. Also registers need to be only set inside such an if statement, don't change their values outside.
