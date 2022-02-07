@@ -27,7 +27,7 @@ end process;
 end or_beh;
 ```
 
-Some things to note here: the sensitivity list contains both a and b, and generally if the circuit part is purely combitorial then it should always contain all of the inputs of the part in the sensitivity list. So you can look at all of the right hand sides of the '<=' and everything that is at the right hand side should always be in the sensitivity list. The above example synthesizes correctly and gives the netlist as 
+Some things to note here: the sensitivity list contains both a and b, and generally if the circuit part is purely combitorial then it should always contain all of the inputs of the part in the sensitivity list. So you can look at the '<=' and everything that is at the right hand side should always be in the sensitivity list. The above example synthesizes correctly and gives the netlist as 
 
 ![OR](https://github.com/taitaisama/VHDL_design_practices/blob/main/OR.png?raw=true)
 
