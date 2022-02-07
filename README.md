@@ -1,10 +1,9 @@
-
 # VHDL_design_practices
 
 ## Combitorial circuts:
 
 This is for parts of the circuit that do not involve registers, so everything gets processed simultaneously. I will take the example of a basic OR gate. The program is written as:
-
+```
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -26,6 +25,7 @@ begin
 end process;
 
 end or_beh;
+```
 
 Some things to note here: the sensitivity list contains both a and b, and generally if the circuit part is purely combitorial then it should always contain all of the inputs of the part in the sensitivity list. So you can look at all of the right hand sides of the '<=' and everything that is at the right hand side should always be in the sensitivity list. The above example synthesizes correctly and gives the netlist as 
 
@@ -33,10 +33,12 @@ Some things to note here: the sensitivity list contains both a and b, and genera
 
 Now if I change the process part to
 
+```
 process(a)
 begin
    c <= a or b;
 end process;
+```
 
 and then compile this then first of all I get the warning: 
 
@@ -48,6 +50,7 @@ So Rule 1: Always have the right hand side of all combitorial assignments in the
 
 Now we modify this example and say that we want only an OR gate if there is a boolean signal "sel" set as true. The naive implementation will be
 
+```
 library ieee;
 use ieee.numeric_std.all;
 use ieee.std_logic_1164.all;
@@ -72,6 +75,7 @@ begin
 end process;
 
 end or_beh;
+```
 
 However there is an issue with this implementation. Lets try and synthesize this and see what happens. 
 
@@ -85,6 +89,7 @@ And now my netlist looks like:
 
 The thing here is that the value of c is set only in one branch of the if statement branches, so if for example sel is set to false then the signal 'c' needs to be aware of what its previous value was and accordingly keep that same value. In combitorial circuits this behaviour is undesirable and you usually dont want to have a latch, so you fix this you have to set a default value to c when sel is false. We change the process to
 
+```
 process(a, b, sel)
 begin
 	if (sel) then
@@ -93,6 +98,7 @@ begin
 		c <= '0';
 	end if;		
 end process;
+```
 
 And now my netlist looks like 
 
@@ -103,6 +109,8 @@ So Rule 2 is: In combitorial circuits if you are assigning a value to a signal t
 ## Registers
 
 Now we come to Modeling registers, or edge triggered flip flops. I'll take the example of a simple register that takes the value of the input 'a' when the clock is on its rising edge. The general way to do this is to keep the sensitivity list of the process as just the clock and then have a if(rising_edge(clock)) statement inside that. The code is
+
+```
 
 library ieee;
 use ieee.numeric_std.all;
@@ -127,6 +135,7 @@ begin
 end process;
 
 end reg_beh;
+```
 
 And as extected, we get our netlist as:
 
