@@ -29,7 +29,7 @@ end or_beh;
 
 Some things to note here: the sensitivity list contains both a and b, and generally if the circuit part is purely combitorial then it should always contain all of the inputs of the part in the sensitivity list. So you can look at all of the right hand sides of the '<=' and everything that is at the right hand side should always be in the sensitivity list. The above example synthesizes correctly and gives the netlist as 
 
-//insert image
+![OR](https://github.com/taitaisama/VHDL_design_practices/blob/main/OR.png?raw=true)
 
 Now if I change the process part to
 
@@ -85,7 +85,7 @@ Warning (10631): VHDL Process Statement warning at test_or.vhd(17): inferring la
 
 And now my netlist looks like:
 
-// insert latched netlist
+![latch](https://github.com/taitaisama/VHDL_design_practices/blob/main/ORLATCH.png?raw=true)
 
 The thing here is that the value of c is set only in one branch of the if statement branches, so if for example sel is set to false then the signal 'c' needs to be aware of what its previous value was and accordingly keep that same value. In combitorial circuits this behaviour is undesirable and you usually dont want to have a latch, so you fix this you have to set a default value to c when sel is false. We change the process to
 
@@ -102,7 +102,7 @@ end process;
 
 And now my netlist looks like 
 
-// insert multiplexed netlist
+![ORMULTIPLEX](https://github.com/taitaisama/VHDL_design_practices/blob/main/ORMULTIPLEX.png?raw=true)
 
 So Rule 2 is: In combitorial circuits if you are assigning a value to a signal then do it in all branches of an if statement or a switch case statement. Note that this is relevant for setting carryout bit in ALU, you might think that it isn't important to set it in an instruction like AND, however you have to always give it a default value if it isn't being set, unless you specifically want a latch (usually you wont tho).
 
@@ -139,6 +139,6 @@ end reg_beh;
 
 And as extected, we get our netlist as:
 
-// insert register netlist
+![REGISTER](https://github.com/taitaisama/VHDL_design_practices/blob/main/REGISTER.png?raw=true)
 
 So Rule 3 is: To initialise varibles that you want to be in registers you put them in a process which just has one sensitivity, clock, and then initialise them in an if condition as rising_edge(clock) or falling_edge(clock). The only variables that have to be set here are registers, so don't put anything that you don't want as a register inside this if statement. Also registers need to be only set inside such an if statement, don't change their values outside.
