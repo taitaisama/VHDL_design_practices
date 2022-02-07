@@ -1,4 +1,4 @@
-# VHDL Dsign Practices
+# VHDL Design Practices
 
 ## Combitorial circuts:
 
@@ -108,7 +108,7 @@ So Rule 2 is: In combitorial circuits if you are assigning a value to a signal t
 
 ## Registers
 
-Now we come to Modeling registers, or edge triggered flip flops. I'll take the example of a simple register that takes the value of the input 'a' when the clock is on its rising edge. The general way to do this is to keep the sensitivity list of the process as just the clock and then have a if(rising_edge(clock)) statement inside that. The code is
+Now we come to Modeling registers, or edge triggered flip flops. I'll take the example of a simple register that takes the value of the input 'a' when the clock is on its rising edge. The general way to do this is to keep the sensitivity list of the process as just the clock and then have a `if(rising_edge(clock))` statement inside that. The code is
 
 ```
 
