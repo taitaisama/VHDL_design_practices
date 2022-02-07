@@ -19,7 +19,7 @@ architecture or_beh of test_or is
 
 begin
 
-process(a)
+process(a, b)
 begin
 	c <= a or b;
 end process;
