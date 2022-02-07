@@ -87,7 +87,7 @@ And now my netlist looks like:
 
 ![latch](https://github.com/taitaisama/VHDL_design_practices/blob/main/ORLATCH.png?raw=true)
 
-The thing here is that the value of c is set only in one branch of the if statement branches, so if for example sel is set to false then the signal 'c' needs to be aware of what its previous value was and accordingly keep that same value. In combitorial circuits this behaviour is undesirable and you usually dont want to have a latch, so you fix this you have to set a default value to c when sel is false. We change the process to
+The thing here is that the value of c is set only in one branch of the if statement branches, so if for example sel is set to false then the signal 'c' needs to be aware of what its previous value was and accordingly keep that same value. In combitorial circuits this behaviour is undesirable and you usually dont want to have a latch, so to fix this you have to set a default value to c when sel is false. We change the process to
 
 ```
 process(a, b, sel)
