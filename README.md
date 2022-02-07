@@ -1,4 +1,4 @@
-# VHDL_design_practices
+# VHDL Dsign Practices
 
 ## Combitorial circuts:
 
