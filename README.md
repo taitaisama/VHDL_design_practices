@@ -1,5 +1,8 @@
 # VHDL Design Practices
 
+General Good practices:
+- Label your loops, processes etc. Makes it easier to debug
+
 ## Combinatorial circuts:
 
 This is for parts of the circuit that do not involve registers, so everything gets processed simultaneously. I will take the example of a basic OR gate. The program is written as:
@@ -42,7 +45,7 @@ end process;
 
 and then compile this then first of all I get the warning: 
 
-Warning (10492): VHDL Process Statement warning at test_or.vhd(18): signal "b" is read inside the Process Statement but isn't in the Process Statement's sensitivity list
+`Warning (10492): VHDL Process Statement warning at test_or.vhd(18): signal "b" is read inside the Process Statement but isn't in the Process Statement's sensitivity list`
 
 Now does this synthesize? Yes it does, however the synthesis tool will still generate the same netlist, which will be a simple OR gate with a and b as inputs and c as output. But the thing to note is that the program will behave differently from the gate that is synthesized. You can tell because an OR gate output will also change when the input b changes, however the vhdl code will not behave like this and c will only update when a changes. 
 
@@ -142,3 +145,63 @@ And as expected, we get our netlist as:
 ![REGISTER](https://github.com/taitaisama/VHDL_design_practices/blob/main/REGISTER.png?raw=true)
 
 So Rule 3 is: To initialise variables that you want to be in registers you put them in a process which just has one sensitivity, `clock`, and then initialise them in an if condition as `rising_edge(clock)` or `falling_edge(clock)`. The only variables that have to be set here are registers, so don't put anything that you don't want as a register inside this if statement. Also registers need to be only set inside such an if statement, don't change their values outside.
+
+## Some more VHDL Concepts
+
+### Generics
+
+Suppose your design needs registers of varying sizes: 8, 16 and 32 bits. The naive way of doing this is to make three register components `reg8`, `reg16` and `reg24`, but we can use generics to pass the size attribute to the register. Here's a simple example:
+
+```
+entity reg is
+    generic (size : integer := 32 );
+    port (
+        data_in  : in std_logic_vector((size-1) downto 0);
+        data_out : out std_logic_vector((size-1) downto 0);
+        clock    : in std_logic;
+        w_en     : in std_logic
+    );
+end reg;
+```
+
+note that size is a `generic`, whose default value is 32. We can instantiate this register as follows:
+```
+    reg1: entity work.reg generic map (16) port map (data_in, data_out, clock, w_en)
+```
+
+This creates a 16-bit register. Omitting the `generic map ()` statement will create a 32-bit register, which is the default register size.
+
+### `for ... generate`
+
+Suppose you have a 32-bit sequential adder that you need to create with 32 one-bit adders. The naive way is to manually write out all 32 entries (or write a script to generate them), but the `for ... generate` statement allows us to generate and chain all these adders using a for loop
+
+```
+entity full_adder is port (x,y,c_in: in std_logic; s,c_out: out std_logic);
+end full_adder;
+.
+.
+entity int_adder is 
+    port (
+        a,b: in std_logic_vector(31 downto 0); 
+        ans: out std_logic_vector(31 downto 0);
+        c_in: in std_logic;
+        c_out: out std_logic;
+    );
+end int_adder;
+
+architecture int_adder_df of int_adder is
+    signal carries: std_logic_vector(32 downto 0);
+begin
+    gen_adders: for i in 0 to 31 generate
+        ADDX : entity work.int_adder port map
+            (a(i), b(i), carries(i), ans(i), carries(i+1));
+    end generate gen_adders;
+
+    .
+    .
+end int_adder_df;
+```
+
+## References
+
+1. _Perry, Douglas L_. VHDL: Programming by Example. 4th ed, McGraw-Hill, 2002.
